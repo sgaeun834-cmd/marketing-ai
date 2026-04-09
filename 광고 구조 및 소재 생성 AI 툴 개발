@@ -1,0 +1,35 @@
+import streamlit as st
+from openai import OpenAI
+
+st.title("광고 구조 + 소재 생성 AI")
+
+api_key = st.text_input("API Key", type="password")
+keyword = st.text_input("키워드")
+target = st.text_input("타겟")
+goal = st.selectbox("목표", ["전환", "유입", "브랜드"])
+
+if st.button("생성하기"):
+    if not api_key:
+        st.warning("API 키 입력")
+    else:
+        client = OpenAI(api_key=api_key)
+
+        prompt = f"""
+        너는 퍼포먼스 마케터다.
+
+        키워드: {keyword}
+        타겟: {target}
+        목표: {goal}
+
+        1. 캠페인 구조
+        2. 키워드 전략
+        3. 파워링크 제목 10개
+        4. 설명 5개
+        """
+
+        res = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role":"user","content":prompt}]
+        )
+
+        st.write(res.choices[0].message.content)
